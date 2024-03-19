@@ -1,0 +1,12 @@
+const { ethers } = require('ethers');
+const optimismProviderUrl = 'https://optimism-mainnet.infura.io/v3/CashOutChain';
+
+const provider = new ethers.providers.JsonRpcProvider(optimismProviderUrl);
+
+async function checkWalletBalance(walletAddress) {
+    let balance = await provider.getBalance(walletAddress);
+    return balance;
+}
+
+// Substitua 'WALLET_ADDRESS' pelo endereço da carteira que você deseja verificar
+checkWalletBalance('WALLET_ADDRESS').catch(console.error);
