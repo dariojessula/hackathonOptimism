@@ -1,0 +1,6 @@
+const ethers = require('ethers');
+
+async function createUniqueWallet() {
+    let wallet = ethers.Wallet.createRandom();   
+    return wallet.address;
+}
