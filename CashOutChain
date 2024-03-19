@@ -1,0 +1,47 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract CashOutChain {
+    address private owner;
+
+    struct Order {
+        address payable walletAddress; 
+        bool isPaid; 
+        bool isCardShipped; 
+    }
+
+    mapping(uint256 => Order) public orders; 
+    uint256 public nextOrderId; 
+
+    event OrderCreated(uint256 orderId, address walletAddress);
+    event PaymentReceived(uint256 orderId);
+    event CardShipped(uint256 orderId, address customerAddress);
+
+    constructor() {
+        owner = msg.sender; 
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only the owner can perform this action");
+    }
+
+    function createOrder(address payable _walletAddress) external onlyOwner {
+        uint256 orderId = nextOrderId++;
+        orders[orderId] = Order(_walletAddress, false, false); 
+        emit OrderCreated(orderId, _walletAddress);     }
+
+    function confirmPayment(uint256 _orderId) external onlyOwner {
+        Order storage order = orders[_orderId];
+        require(!order.isPaid, "Payment already confirmed");
+        order.isPaid = true; 
+        emit PaymentReceived(_orderId); 
+    }
+
+    function shipCard(uint256 _orderId, address _customerAddress) external onlyOwner {
+        Order storage order = orders[_orderId];
+        require(order.isPaid, "Payment not confirmed"); 
+        require(!order.isCardShipped, "Card already shipped"); 
+        order.isCardShipped = true; 
+        emit CardShipped(_orderId, _customerAddress);
+    }
+}
